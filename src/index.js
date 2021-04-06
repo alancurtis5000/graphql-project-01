@@ -12,6 +12,7 @@ import { store, persistor } from "./redux/store";
 
 import "./index.css";
 import App from "./App";
+import { resolvers, typeDefs } from "./graphql/resolvers";
 
 //establish connection to backend
 const httpLink = createHttpLink({
@@ -23,6 +24,15 @@ const cache = new InMemoryCache();
 const client = new ApolloClient({
   link: httpLink,
   cache,
+  typeDefs,
+  resolvers,
+});
+
+// this is the apollo's local cache / replacing redux store
+client.writeData({
+  data: {
+    cartHidden: true,
+  },
 });
 
 // this is a promise
