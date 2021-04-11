@@ -1,5 +1,5 @@
 import { gql } from "apollo-boost";
-import { addItemToCart } from "./cart.utils";
+import { addItemToCart, getCartItemCount } from "./cart.utils";
 
 // type definitions / type / schema for grapql
 // extend means add new mutations to graphql
@@ -19,6 +19,12 @@ export const typeDefs = gql`
 const GET_CART_HIDDEN = gql`
   {
     cartHidden @client
+  }
+`;
+
+const GET_ITEM_COUNT = gql`
+  {
+    itemCount @client
   }
 `;
 
@@ -56,6 +62,11 @@ export const resolvers = {
         query: GET_CART_ITEMS,
       });
       const newCartItems = addItemToCart(cartItems, item);
+
+      cache.writeQuery({
+        query: GET_ITEM_COUNT,
+        data: { itemCount: getCartItemCount(newCartItems) },
+      });
       cache.writeQuery({
         query: GET_CART_ITEMS,
         data: { cartItems: newCartItems },
